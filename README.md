@@ -1,2 +1,2 @@
-# PrioriryControl
+# PriorityControl
 Программа для Windows 11/10 которая умеет фиксировать приоритеты процессов.
