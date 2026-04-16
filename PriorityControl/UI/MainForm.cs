@@ -89,7 +89,7 @@ namespace PriorityControl.UI
 
         private void InitializeComponent()
         {
-            Text = "PriorityControl";
+            Text = "PriorityControl v" + GetDisplayVersion();
             StartPosition = FormStartPosition.CenterScreen;
             MinimumSize = new Size(980, 520);
             Size = new Size(1180, 640);
@@ -242,7 +242,7 @@ namespace PriorityControl.UI
             _statusTimer = new Timer { Interval = 2000 };
             _statusTimer.Tick += delegate
             {
-                if (!_isGridEditing)
+                if (!_isGridEditing && Visible && WindowState != FormWindowState.Minimized)
                 {
                     RefreshAllStatuses();
                 }
@@ -436,7 +436,18 @@ namespace PriorityControl.UI
 
                 if (errors.Length > 0)
                 {
-                    MessageBox.Show(this, errors.ToString(), "Start errors", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    string diagnostics =
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        "PriorityControl v" + GetDisplayVersion() +
+                        Environment.NewLine +
+                        Application.ExecutablePath;
+                    MessageBox.Show(
+                        this,
+                        errors.ToString().TrimEnd() + diagnostics,
+                        "Start errors",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
                 }
 
                 SetInfo(string.Format("Started {0} {1} with fixed priority.", startedCount, EntryWord(startedCount)));
@@ -766,6 +777,17 @@ namespace PriorityControl.UI
         private static string EntryWord(int count)
         {
             return count == 1 ? "entry" : "entries";
+        }
+
+        private static string GetDisplayVersion()
+        {
+            Version version;
+            if (Version.TryParse(Application.ProductVersion, out version))
+            {
+                return version.ToString(2);
+            }
+
+            return Application.ProductVersion;
         }
 
         private void ClearGridSelection()
